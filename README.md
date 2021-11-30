@@ -37,11 +37,17 @@ RETURN p;
 ```cypher
 match(n:Person{foedselsnummer:'07841497982'}) return n
 ```
+
 ### Hent person med navn
 
 ```cypher
 MATCH (p:Person)
 WHERE p.navn = "Effektiv Mann"
+RETURN p;
+```
+eller
+```cypher
+MATCH (p:Person {navn= 'Effektiv Mann'})
 RETURN p;
 ```
 
