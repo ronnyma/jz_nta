@@ -12,18 +12,42 @@ Store any kind of data using the following graph concepts:
 * **Label**: Groups nodes and relationships (optional)
 
 ---
+# Datamodell
+## Person
 
-## Browser editor
+```
+Person(
+foedselsdato:	date
+foedselsnummer:	String
+kjoenn	{MANN|KVINNE}
+navn	String
+personstatus	{BOSATT|MIDLERTIDIG|DOED|UTFLYTTET}
+postnummer: String
 
-### CLI
+)
 
-Examples: `:help` `:clear`
+FAMILIERELASJON {
+ergjeldende: boolean
+gyldighetsdato: date
+rolle: {BARN|EKTEFELLE_ELLER_PARTNER|MOR|FAR|MEDMOR}
+}
 
----
+SIVILSTAND {
+ergjeldende: boolean
+gyldighetsdato: date
+myndighet: String
+sivilstand: {UGIFT|GIFT|SEPARERT|SKILT|UOPPGITT}
+}
+
+SIVILSTAND {
+ergjeldende: boolean
+gyldighetsdato: date
+ansvarstype: {FELLES|MOR|FAR|MEDMOR|UKJENT}
+}
+```
 
 # Cypher
 
-## Match
 
 ### Hent samtlige personer (Match node)
 
