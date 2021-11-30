@@ -61,16 +61,24 @@ RETURN p,relasjoner
 LIMIT 1
 ```
 
-### Hent person som har vært gift mer enn en gang
+### Hent person som har vært gift mer enn en gang (må være bosatt). 
 
 ```cypher
-MATCH (p:Person)-[r:SIVILSTAND]-(:Person)
+MATCH (p:Person {personstatus: 'BOSATT'})-[r:SIVILSTAND]-(:Person {personstatus: 'BOSATT'})
 WITH p, count(r) as relasjoner
 WHERE relasjoner > 2
 RETURN p, relasjoner
 LIMIT 1
 ```
+#### Bytt ut person 2 med DOED for å finne enke/enkemann
 
+```cypher
+MATCH (p:Person {personstatus: 'BOSATT'})-[r:SIVILSTAND]-(:Person {personstatus: 'DOED'})
+WITH p, count(r) as relasjoner
+WHERE relasjoner > 2
+RETURN p, relasjoner
+LIMIT 1
+```
 ### Antall personer i relasjonen mellom `03912849065` og `03912949833`
 ```cypher
 MATCH (p:Person {foedselsnummer: '03912849065'}),
