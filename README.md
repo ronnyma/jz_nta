@@ -39,14 +39,14 @@ myndighet: String
 sivilstand: {UGIFT|GIFT|SEPARERT|SKILT|UOPPGITT}
 }
 
-SIVILSTAND {
+FORELDREANSVAR {
 ergjeldende: boolean
 gyldighetsdato: date
 ansvarstype: {FELLES|MOR|FAR|MEDMOR|UKJENT}
 }
 ```
 
-# Cypher
+# Spørringer
 
 
 ### Hent samtlige personer (Match node)
@@ -118,4 +118,12 @@ RETURN r
 MATCH (p:Person)
 where size((p)<-[:FAMILIERELASJON]-(:Person)) <> size((p)-[:FAMILIERELASJON]->(:Person))
 return p limit 5
+```
+
+```
+MATCH (p:Person {personstatus: 'BOSATT'})-[r:FORELDREANSVAR {ergjeldende: TRUE}]-(:Person {personstatus: 'BOSATT'})
+WITH p, count(r) as relasjoner
+WHERE relasjoner > 1
+RETURN p, relasjoner
+LIMIT 1
 ```
