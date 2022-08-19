@@ -127,3 +127,32 @@ WHERE relasjoner > 1
 RETURN p, relasjoner
 LIMIT 1
 ```
+
+# Import av data
+
+## Persondata
+```
+LOAD CSV WITH HEADERS FROM "file:///personer.csv" AS row
+create(p:Person {foedselsnummer: row.fnummer, personstatus:row.personstatus,kjoenn:row.kjoenn,foedselsdato:date(row.foedselsdato),sivilstand:row.sivilstand,navn:row.fornavn + " " + row.etternavn, postnummer:row.postnummer})
+```
+
+## Familierelasjoner
+```
+LOAD CSV WITH HEADERS FROM "file:///relasjoner.csv" AS row
+match (p:Person {foedselsnummer: row.fnummer1}),(q:Person {foedselsnummer: row.fnummer2})
+create (p)-[:FAMILIERELASJON {rolle: row.fnummer1_rolle,ergjeldende:row.ergjeldende,gyldighetstidspunkt:row.gyldighetsdato}]->(q)
+```
+
+## Foreldreansvar
+```
+LOAD CSV WITH HEADERS FROM "file:///foreldreansvar.csv" AS row
+match (p:Person {foedselsnummer: row.ansvarlig}),(q:Person {foedselsnummer: row.ansvarssubjekt})
+create (p)-[:FORELDREANSVAR {ansvarstype: row.ansvarstype,ergjeldende:row.ergjeldende,gyldighetstidspunkt:row.gyldighetsdato}]->(q)
+```
+
+## Sivilstand
+```
+LOAD CSV WITH HEADERS FROM "file:///sivilstand.csv" AS row
+match (p:Person {foedselsnummer: row.hovedperson}),(q:Person {foedselsnummer: row.ektefelleEllerPartner})
+create (p)-[:SIVILSTAND {sivilstand: row.sivilstand,ergjeldende:row.ergjeldende,sivilstandsdato:row.sivilstandsdato,myndighet:row.myndighet}]->(q)
+```
