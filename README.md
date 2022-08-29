@@ -156,3 +156,23 @@ LOAD CSV WITH HEADERS FROM "file:///sivilstand.csv" AS row
 match (p:Person {foedselsnummer: row.hovedperson}),(q:Person {foedselsnummer: row.ektefelleEllerPartner})
 create (p)-[:SIVILSTAND {sivilstand: row.sivilstand,ergjeldende:toBoolean(row.erGjeldende),sivilstandsdato:date(row.sivilstandsdato),myndighet:row.myndighet}]->(q)
 ```
+## Avvik
+```
+create(p:Person {foedselsnummer:'01818254321',foedselsdato:date('1982-01-01'), personstatus:'BOSATT', navn:'Levende Ektefelle', kjoenn:'KVINNE',postnummer:'0772'})
+
+create(p:Person {foedselsnummer:'01918054391',foedselsdato:date('1980-11-01'), personstatus:'DOED', navn:'Død Ektefelle', kjoenn:'MANN',postnummer:'0772'})
+
+match(d:Person{foedselsnummer:'01918054391'}),(l:Person{foedselsnummer: '01818254321'})
+create (d)-[:SIVILSTAND{sivilstand: 'GIFT', ergjeldende: TRUE, gyldighetstidspunkt:date('2010-01-01')}]->(l)
+
+match(d:Person{foedselsnummer:'01818254321'}),(l:Person{foedselsnummer: '01918054391'})
+create (d)-[:SIVILSTAND{sivilstand: 'GIFT', ergjeldende: TRUE, gyldighetstidspunkt:date('2010-01-01')}]->(l)
+```
+
+## Finne dette
+```
+MATCH (p:Person {personstatus: 'BOSATT'})-[r1:SIVILSTAND{sivilstand:'GIFT', ergjeldende: TRUE}]-(e:Person {personstatus: 'DOED'})
+, (p)-[:FAMILIERELASJON{rolle:'EKTEFELLE', ergjeldende: TRUE}]-(e)
+WITH p
+RETURN p
+```
